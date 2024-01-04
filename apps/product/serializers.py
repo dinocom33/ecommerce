@@ -10,7 +10,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = ['category_name']
 
 
 class BrandSerializer(serializers.ModelSerializer):
@@ -20,23 +20,7 @@ class BrandSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Brand
-        fields = '__all__'
-
-
-class ProductSerializer(serializers.ModelSerializer):
-    """
-    Product model serializer.
-    """
-
-    class Meta:
-        model = Product
-        fields = '__all__'
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        representation['brand_name'] = instance.brand.brand_name
-        representation['category_name'] = instance.category.category_name
-        return representation
+        exclude = ['id']
 
 
 class ProductLineSerializer(serializers.ModelSerializer):
@@ -44,8 +28,33 @@ class ProductLineSerializer(serializers.ModelSerializer):
     ProductLine model serializer.
     """
 
-    product = ProductSerializer(read_only=True)
-
     class Meta:
         model = ProductLine
-        fields = '__all__'
+        exclude = ['id', 'is_active', 'product']
+
+
+class ProductSerializer(serializers.ModelSerializer):
+    """
+    Product model serializer.
+    """
+
+    brand_name = serializers.CharField(source='brand.brand_name')
+    category_name = serializers.CharField(source='category.category_name', read_only=True)
+    product_line = ProductLineSerializer(many=True)
+
+    class Meta:
+        model = Product
+        fields = ['product_name',
+                  'slug',
+                  'description',
+                  'is_active',
+                  'brand_name',
+                  'category_name',
+                  'product_line'
+                  ]
+
+    # def to_representation(self, instance):
+    #     representation = super().to_representation(instance)
+    #     representation['brand_name'] = instance.brand.brand_name
+    #     representation['category_name'] = instance.category.category_name
+#         return representation
