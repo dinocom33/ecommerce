@@ -24,6 +24,7 @@ class Category(MPTTModel):
         blank=True,
     )
     is_active = models.BooleanField(default=False)
+    slug = AutoSlugField(populate_from='category_name', unique=True)
 
     objects = ActiveQueryset.as_manager()
 
@@ -95,12 +96,11 @@ class ProductLine(models.Model):
 
     objects = ActiveQueryset.as_manager()
 
-    def clean_fields(self, exclude=None):
-        super().clean_fields(exclude=exclude)
+    def clean(self, exclude=None):
         qs = ProductLine.objects.filter(product=self.product,)
         for obj in qs:
             if obj.id != self.id and obj.order == self.order:
                 raise ValidationError('Order must be unique per product.')
 
     def __str__(self):
-        return self.product.product_name
+        return self.sku

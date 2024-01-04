@@ -1,9 +1,12 @@
 import factory
 
-from apps.product.models import Category, Brand, Product
+from apps.product.models import Category, Brand, Product, ProductLine
 
 
 class CategoryFactory(factory.django.DjangoModelFactory):
+    """
+    Factory for Category model.
+    """
     class Meta:
         model = Category
 
@@ -11,6 +14,9 @@ class CategoryFactory(factory.django.DjangoModelFactory):
 
 
 class BrandFactory(factory.django.DjangoModelFactory):
+    """
+    Factory for Brand model.
+    """
     class Meta:
         model = Brand
 
@@ -18,6 +24,9 @@ class BrandFactory(factory.django.DjangoModelFactory):
 
 
 class ProductFactory(factory.django.DjangoModelFactory):
+    """
+    Factory for Product model.
+    """
     class Meta:
         model = Product
 
@@ -26,4 +35,18 @@ class ProductFactory(factory.django.DjangoModelFactory):
     is_digital = False
     category = factory.SubFactory(CategoryFactory)
     brand = factory.SubFactory(BrandFactory)
+    is_active = True
+
+
+class ProductLineFactory(factory.django.DjangoModelFactory):
+    """
+    Factory for ProductLine model.
+    """
+    class Meta:
+        model = ProductLine
+
+    price = 10.00
+    sku = '12345'
+    quantity = 1
+    product = factory.SubFactory(ProductFactory)
     is_active = True
