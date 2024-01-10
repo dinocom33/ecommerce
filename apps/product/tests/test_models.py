@@ -1,7 +1,7 @@
 import pytest
 from django.core.exceptions import ValidationError
 
-from apps.product.models import Category, Brand, Product
+from apps.product.models import Category, Brand, Product, ProductLine, ProductImage
 
 pytestmark = pytest.mark.django_db
 
@@ -67,3 +67,17 @@ class TestProductLineModel:
 
         with pytest.raises(ValidationError):
             product_line_factory(order=1, product=obj).clean()
+
+
+class TestProductImageModel:
+    """
+    Test ProductImage Model
+    """
+
+    def test_str_method(self, product_image_factory):
+        """
+        Test product image model str method
+        """
+        obj = product_image_factory(url='test_image.jpg')
+
+        assert str(obj) == 'test_image.jpg'
