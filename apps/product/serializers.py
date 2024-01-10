@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Category, Brand, Product, ProductLine
+from .models import Category, Brand, Product, ProductLine, ProductImage
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -23,14 +23,31 @@ class BrandSerializer(serializers.ModelSerializer):
         exclude = ['id']
 
 
+class ProductImageSerializer(serializers.ModelSerializer):
+    """
+    Product Image model serializer.
+    """
+
+    class Meta:
+        model = ProductImage
+        exclude = ['id', 'product_line']
+
+
 class ProductLineSerializer(serializers.ModelSerializer):
     """
     ProductLine model serializer.
     """
+    product_image = ProductImageSerializer(many=True)
 
     class Meta:
         model = ProductLine
-        exclude = ['id', 'is_active', 'product']
+        fields = [
+            'price',
+            'sku',
+            'quantity',
+            'order',
+            'product_image',
+        ]
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -52,9 +69,3 @@ class ProductSerializer(serializers.ModelSerializer):
                   'category_name',
                   'product_line'
                   ]
-
-    # def to_representation(self, instance):
-    #     representation = super().to_representation(instance)
-    #     representation['brand_name'] = instance.brand.brand_name
-    #     representation['category_name'] = instance.category.category_name
-#         return representation

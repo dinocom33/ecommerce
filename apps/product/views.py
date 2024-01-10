@@ -1,3 +1,5 @@
+from django.db import connection
+from django.db.models import Prefetch
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -47,13 +49,17 @@ class ProductViewSet(viewsets.ViewSet):
     """
     queryset = Product.objects.all().isactive()
     lookup_field = 'slug'
+    serializer_class = ProductSerializer
 
     def retrieve(self, request, slug=None):
         """
         Retrieve a product.
         """
         serializer = ProductSerializer(
-            self.queryset.filter(slug=slug).select_related('brand', 'category'),
+            Product.objects.filter(slug=slug)
+            .select_related('brand', 'category')
+            .prefetch_related(Prefetch('product_line'))
+            .prefetch_related(Prefetch('product_line__product_image')),
             many=True
         )
 

@@ -1,14 +1,34 @@
 from django.contrib import admin
+from django.urls import reverse
+from django.utils.safestring import mark_safe
 
-from apps.product.models import Product, Brand, Category, ProductLine
+from apps.product.models import Product, Brand, Category, ProductLine, ProductImage
 
 
-class ProductLineInline(admin.TabularInline):
+class EditLinkInLine(object):
+    def edit(self, instance):
+        url = reverse(
+            f'admin:{instance._meta.app_label}_{instance._meta.model_name}_change',
+            args=[instance.pk],
+        )
+        if instance.pk:
+            link = mark_safe('<a href="{u}">Edit</a>'.format(u=url))
+            return link
+
+        return ''
+
+
+class ProductImageInLine(admin.TabularInline):
+    model = ProductImage
+
+
+class ProductLineInline(EditLinkInLine, admin.TabularInline):
     """
     ProductLine inline model admin.
     """
     model = ProductLine
-    extra = 1
+    readonly_fields = ('edit',)
+    # extra = 1
 
 
 @admin.register(Product)
@@ -16,7 +36,9 @@ class ProductAdmin(admin.ModelAdmin):
     """
     Product model admin.
     """
-    inlines = [ProductLineInline]
+    inlines = [
+        ProductLineInline
+    ]
     list_display = (
         'product_name',
         'is_digital',
@@ -64,6 +86,9 @@ class ProductLineAdmin(admin.ModelAdmin):
     """
     ProductLine model admin.
     """
+    inlines = [
+        ProductImageInLine
+    ]
     list_display = ('product', 'quantity', 'price')
     list_filter = ('product',)
     search_fields = ('product__product_name',)

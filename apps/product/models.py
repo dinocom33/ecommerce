@@ -14,7 +14,11 @@ class ActiveQueryset(models.QuerySet):
 
 class Category(MPTTModel):
     """
+<<<<<<< Updated upstream
     Category model.
+=======
+    Category
+>>>>>>> Stashed changes
     """
     category_name = models.CharField(max_length=100, unique=True)
     parent = TreeForeignKey(
@@ -41,7 +45,11 @@ class Category(MPTTModel):
 
 class Brand(models.Model):
     """
+<<<<<<< Updated upstream
     Brand model.
+=======
+    Brand
+>>>>>>> Stashed changes
     """
     brand_name = models.CharField(max_length=100, unique=True)
     is_active = models.BooleanField(default=False)
@@ -54,7 +62,11 @@ class Brand(models.Model):
 
 class Product(models.Model):
     """
+<<<<<<< Updated upstream
     Product model.
+=======
+    Product
+>>>>>>> Stashed changes
     """
     product_name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
@@ -78,6 +90,7 @@ class Product(models.Model):
 
 class ProductLine(models.Model):
     """
+<<<<<<< Updated upstream
     Line of product.
     """
     price = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
@@ -102,5 +115,39 @@ class ProductLine(models.Model):
             if obj.id != self.id and obj.order == self.order:
                 raise ValidationError('Order must be unique per product.')
 
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super(ProductLine, self).save(*args, **kwargs)
+
     def __str__(self):
-        return self.sku
+        return str(self.sku)
+
+
+class ProductImage(models.Model):
+    """
+    Product image model.
+    """
+    alternative_text = models.CharField(max_length=100)
+    url = models.ImageField(upload_to=None, default='test.jpg')
+    product_line = models.ForeignKey(
+        ProductLine,
+        on_delete=models.CASCADE,
+        related_name='product_image'
+    )
+    order = OrderField(
+        unique_for_field='product_line',
+        blank=True
+    )
+
+    def clean(self):
+        qs = ProductImage.objects.filter(product_line=self.product_line)
+        for obj in qs:
+            if obj.id != self.id and obj.order == self.order:
+                raise ValidationError('Order must be unique per product.')
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super(ProductImage, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return str(self.url)
