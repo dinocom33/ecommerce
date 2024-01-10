@@ -14,7 +14,11 @@ class ActiveQueryset(models.QuerySet):
 
 class Category(MPTTModel):
     """
+<<<<<<< Updated upstream
     Category model.
+=======
+    Category
+>>>>>>> Stashed changes
     """
     category_name = models.CharField(max_length=100, unique=True)
     parent = TreeForeignKey(
@@ -41,7 +45,11 @@ class Category(MPTTModel):
 
 class Brand(models.Model):
     """
+<<<<<<< Updated upstream
     Brand model.
+=======
+    Brand
+>>>>>>> Stashed changes
     """
     brand_name = models.CharField(max_length=100, unique=True)
     is_active = models.BooleanField(default=False)
@@ -54,7 +62,11 @@ class Brand(models.Model):
 
 class Product(models.Model):
     """
+<<<<<<< Updated upstream
     Product model.
+=======
+    Product
+>>>>>>> Stashed changes
     """
     product_name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
@@ -78,6 +90,7 @@ class Product(models.Model):
 
 class ProductLine(models.Model):
     """
+<<<<<<< Updated upstream
     Line of product.
     """
     price = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
